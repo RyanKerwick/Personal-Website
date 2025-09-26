@@ -1,0 +1,35 @@
+---
+import "../styles/global.css";
+export interface Props { title?: string, description?: string }
+const {
+  title = "Your Name — Portfolio",
+  description = "Personal website of Your Name: projects, experience, and interests."
+} = Astro.props;
+---
+
+<html lang="en" class="scroll-smooth">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>{title}</title>
+    <meta name="description" content={description} />
+
+    <!-- Basic social preview (adjust later) -->
+    <meta property="og:title" content={title} />
+    <meta property="og:description" content={description} />
+    <meta property="og:type" content="website" />
+    <meta name="twitter:card" content="summary_large_image" />
+
+    <!-- Inter font -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&display=swap" rel="stylesheet">
+
+    <!-- AOS (scroll reveals) - optional, safe default -->
+    <link rel="stylesheet" href="https://unpkg.com/aos@2.3.4/dist/aos.css"/>
+  </head>
+  <body class="bg-white text-slate-900 antialiased">
+    <slot />
+    <script src="https://unpkg.com/aos@2.3.4/dist/aos.js"></script>
+    <script> AOS.init({ once: true, duration: 600, easing: 'ease-out' }); </script>
+  </body>
+</html>

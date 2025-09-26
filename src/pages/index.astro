@@ -1,16 +1,49 @@
 ---
+import "../styles/global.css";
+import BaseLayout from "../layouts/BaseLayout.astro";
+import { getCollection } from "astro:content";
 
+const items = await getCollection('sections');
+const ordered = items.sort((a, b) => a.data.order - b.data.order);
+
+// Pre-render each MD entry (lets us use <Content/>)
+const rendered = await Promise.all(
+  ordered.map(async (entry) => {
+    const { Content } = await entry.render();
+    return { entry, Content };
+  })
+);
 ---
 
-<html lang="en">
-	<head>
-		<meta charset="utf-8" />
-		<link rel="icon" type="image/svg+xml" href="/favicon.svg" />
-		<meta name="viewport" content="width=device-width" />
-		<meta name="generator" content={Astro.generator} />
-		<title>Astro</title>
-	</head>
-	<body>
-		<h1>Astro</h1>
-	</body>
+<BaseLayout title="Your Name — Portfolio">
+  <!-- Sticky top nav -->
+  <header class="sticky top-0 z-50 backdrop-blur bg-white/70 border-b">
+    <nav class="max-w-5xl mx-auto px-4 py-3 flex gap-4 overflow-x-auto">
+      {ordered.map((e) => (
+        <a
+          href={`#${e.data.id ?? e.slug}`}
+          class="text-sm font-medium text-slate-600 hover:text-slate-900 whitespace-nowrap"
+        >
+          {e.data.title}
+        </a>
+      ))}
+    </nav>
+  </header>
+
+  <!-- Main content -->
+  <main class="max-w-3xl mx-auto px-4">
+    {rendered.map(({ entry, Content }) => (
+      <section id={entry.data.id ?? entry.slug} class="py-16" data-aos="fade-up">
+        <article class="prose prose-slate">
+          <Content />
+        </article>
+      </section>
+    ))}
+  </main>
+
+  <footer class="mt-16 py-8 text-center text-sm text-slate-500">
+    © {new Date().getFullYear()} Your Name
+  </footer>
+</BaseLayout>
+
 </html>
