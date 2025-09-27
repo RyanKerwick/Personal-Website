@@ -2,8 +2,8 @@
 import "../styles/global.css";
 export interface Props { title?: string, description?: string }
 const {
-  title = "Your Name — Portfolio",
-  description = "Personal website of Your Name: projects, experience, and interests."
+  title = "Ryan Kerwick — Portfolio",
+  description = "Personal website of Ryan Kerwick: projects, experience, and interests."
 } = Astro.props;
 ---
 
@@ -26,7 +26,17 @@ const {
 
     <!-- AOS (scroll reveals) - optional, safe default -->
     <link rel="stylesheet" href="https://unpkg.com/aos@2.3.4/dist/aos.css"/>
+    
+    <!-- Favicon & social image -->
+    <link rel="icon" href="/favicon.ico">
+    <meta property="og:image" content="/og.png" />
+    <meta name="twitter:image" content="/og.png" />
+  
   </head>
+  <script src="https://unpkg.com/aos@2.3.4/dist/aos.js"></script>
+  <script is:inline>
+    AOS.init({ once: true, duration: 600, easing: 'ease-out' });
+  </script>
   <body class="bg-white text-slate-900 antialiased">
     <slot />
     <script src="https://unpkg.com/aos@2.3.4/dist/aos.js"></script>

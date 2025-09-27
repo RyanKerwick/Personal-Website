@@ -2,6 +2,7 @@
 import "../styles/global.css";
 import BaseLayout from "../layouts/BaseLayout.astro";
 import { getCollection } from "astro:content";
+import ThemeToggle from "../components/ThemeToggle.astro";
 
 const items = await getCollection('sections');
 const ordered = items.sort((a, b) => a.data.order - b.data.order);
@@ -14,8 +15,39 @@ const rendered = await Promise.all(
   })
 );
 ---
+<!--
+<header class="sticky top-0 z-50 backdrop-blur bg-white/70 dark:bg-slate-900/70 border-b">
+  <nav class="max-w-5xl mx-auto px-4 py-3 flex gap-4 items-center">
+    {ordered.map((e) => (
+      <a href={`#${e.data.id ?? e.slug}`} class="text-sm font-medium text-slate-600 dark:text-slate-200 hover:text-slate-900 dark:hover:text-white">
+        {e.data.title}
+      </a>
+    ))}
+    <div class="ml-auto"><ThemeToggle /></div>
+  </nav>
+</header>
+-->
 
-<BaseLayout title="Your Name — Portfolio">
+<script is:inline>
+  const links = Array.from(document.querySelectorAll('header nav a'));
+  const map = new Map(links.map(a => [a.getAttribute('href')?.replace('#','')!, a]));
+
+  const onEnter = (id) => {
+    links.forEach(a => a.classList.remove('text-slate-900','dark:text-white'));
+    map.get(id)?.classList.add('text-slate-900','dark:text-white');
+  };
+
+  const obs = new IntersectionObserver((entries) => {
+    entries.forEach(e => {
+      if (e.isIntersecting) onEnter(e.target.id);
+    });
+  }, { rootMargin: "-40% 0px -50% 0px", threshold: 0 });
+
+  document.querySelectorAll('main section[id]').forEach(sec => obs.observe(sec));
+</script>
+
+
+<BaseLayout title="Ryan Kerwick — Portfolio">
   <!-- Sticky top nav -->
   <header class="sticky top-0 z-50 backdrop-blur bg-white/70 border-b">
     <nav class="max-w-5xl mx-auto px-4 py-3 flex gap-4 overflow-x-auto">
@@ -33,7 +65,7 @@ const rendered = await Promise.all(
   <!-- Main content -->
   <main class="max-w-3xl mx-auto px-4">
     {rendered.map(({ entry, Content }) => (
-      <section id={entry.data.id ?? entry.slug} class="py-16" data-aos="fade-up">
+      <section id={entry.data.id ?? entry.slug} class="py-16">
         <article class="prose prose-slate">
           <Content />
         </article>
@@ -42,7 +74,7 @@ const rendered = await Promise.all(
   </main>
 
   <footer class="mt-16 py-8 text-center text-sm text-slate-500">
-    © {new Date().getFullYear()} Your Name
+    © {new Date().getFullYear()} Ryan Kerwick
   </footer>
 </BaseLayout>
 
