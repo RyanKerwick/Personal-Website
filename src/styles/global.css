@@ -31,3 +31,81 @@ html {
   scrollbar-width: thin;              /* "auto" | "thin" */
   scrollbar-color: #cbd5e1 #f8fafc;   /* thumb color | track color */
 }
+
+
+/* Generic collapsible card */
+.collapsible-card {
+  /* Tunables (can override per-card inline) */
+  --collapsed: 9rem;
+  --expanded: 18rem;
+  --current: var(--collapsed);
+  --bg: #f7f7f7;
+
+  background-color: var(--bg);
+  border-radius: 12px;
+  padding: 1rem 1.25rem;
+  margin: 1.25rem 0;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.05);
+}
+
+/* Open state flips the height var */
+.collapsible-card.is-open { --current: var(--expanded); }
+
+/* Title spacing */
+.collapsible-card h3 { margin: 0 0 0.5rem; }
+
+/* Content with slower transition */
+.collapsible-content {
+  position: relative;
+  max-height: var(--current);
+  overflow: hidden;
+  transition: max-height 0.45s ease-in-out; /* slowed down */
+  padding-left: 1.1rem; /* nicer bullets */
+}
+
+/* Fade-out mask when collapsed */
+.collapsible-card:not(.is-open) .collapsible-content::after {
+  content: "";
+  position: absolute;
+  left: 0; right: 0; bottom: 0;
+  height: 2.5rem;
+  pointer-events: none;
+  background: linear-gradient(to bottom, rgba(247,247,247,0), var(--bg));
+}
+
+/* Generic toggle button (centered + subtle hover shade) */
+.collapsible-toggle {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 0.25rem;
+
+  margin: 0.75rem auto 0.25rem; /* centers within card */
+  padding: 0.25rem 0.75rem;
+  background: transparent;
+  border: none;
+  color: #555;
+  font-size: 0.9rem;
+  cursor: pointer;
+  border-radius: 4px;
+  transition: background-color 0.2s ease, color 0.2s ease;
+}
+
+.collapsible-toggle:hover,
+.collapsible-toggle:focus-visible {
+  color: #222;
+  background-color: rgba(0, 0, 0, 0.05); /* slight shade */
+  outline: none;
+}
+
+/* Arrow rotation */
+.collapsible-toggle .arrow {
+  display: inline-block;
+  transform: translateY(-1px) rotate(0deg);
+  transition: transform 0.2s ease;
+  font-size: 0.9em;
+}
+
+.collapsible-toggle[aria-expanded="true"] .arrow {
+  transform: translateY(-1px) rotate(180deg);
+}
