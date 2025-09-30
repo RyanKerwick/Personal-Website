@@ -30,7 +30,7 @@ const rendered = await Promise.all(
 
 <script is:inline>
   const links = Array.from(document.querySelectorAll('header nav a'));
-  const map = new Map(links.map(a => [a.getAttribute('href')?.replace('#','')!, a]));
+  const map = new Map(links.map(a => [a.getAttribute('href')?.replace('#',''), a]));
 
   const onEnter = (id) => {
     links.forEach(a => a.classList.remove('text-slate-900','dark:text-white'));
