@@ -1,12 +1,17 @@
 ---
 import BaseLayout from "../layouts/BaseLayout.astro";
 ---
-<BaseLayout title="Page not found">
-  <main class="min-h-[60vh] grid place-items-center px-4">
-    <div class="text-center">
-      <h1 class="text-3xl font-bold">404 — Page not found</h1>
-      <p class="mt-2 text-slate-600">The page you’re looking for doesn’t exist.</p>
-      <a class="inline-block mt-4 px-4 py-2 rounded border" href="/">Go home</a>
+<BaseLayout title="Page not found — Ryan Kerwick">
+  <main class="page" style="min-height: 70vh; display: grid; place-items: center;">
+    <div style="text-align: center; max-width: 38rem;">
+      <p class="eyebrow" style="justify-content: center;">Error 404 — off the map</p>
+      <h1 class="hero-title" style="font-size: clamp(3rem, 9vw, 6rem); margin: 1.25rem 0 0.75rem;">
+        This page is <em>missing</em>.
+      </h1>
+      <p style="color: var(--ink-soft); font-size: 1.15rem; margin: 0 0 2rem;">
+        Either a broken link, a mistyped URL, or a rogue page that wandered off for coffee.
+      </p>
+      <a class="chip primary" href="/">Go home <span class="arrow" aria-hidden="true">↗</span></a>
     </div>
   </main>
 </BaseLayout>

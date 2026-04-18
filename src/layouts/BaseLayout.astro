@@ -2,8 +2,8 @@
 import "../styles/global.css";
 export interface Props { title?: string, description?: string }
 const {
-  title = "Ryan Kerwick — Portfolio",
-  description = "Personal website of Ryan Kerwick: projects, experience, and interests."
+  title = "Ryan Kerwick — Field Notes",
+  description = "Ryan Kerwick — a computer science student's field notes on embedded systems, software, and side projects."
 } = Astro.props;
 ---
 
@@ -14,32 +14,107 @@ const {
     <title>{title}</title>
     <meta name="description" content={description} />
 
-    <!-- Basic social preview (adjust later) -->
     <meta property="og:title" content={title} />
     <meta property="og:description" content={description} />
     <meta property="og:type" content="website" />
     <meta name="twitter:card" content="summary_large_image" />
 
-    <!-- Inter font -->
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&display=swap" rel="stylesheet">
+    <!-- Distinctive type pair: variable Fraunces + JetBrains Mono -->
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght,SOFT,WONK@0,9..144,300..700,0..100,0..1;1,9..144,300..700,0..100,0..1&family=JetBrains+Mono:ital,wght@0,400;0,500;0,700;1,400&display=swap"
+      rel="stylesheet"
+    />
 
-    <!-- AOS (scroll reveals) - optional, safe default -->
-    <link rel="stylesheet" href="https://unpkg.com/aos@2.3.4/dist/aos.css"/>
-    
-    <!-- Favicon & social image -->
-    <link rel="icon" href="/favicon.ico?v=2">
+    <link rel="icon" href="/favicon.ico?v=2" />
     <meta property="og:image" content="/og.png" />
     <meta name="twitter:image" content="/og.png" />
-  
   </head>
-  <script src="https://unpkg.com/aos@2.3.4/dist/aos.js"></script>
-  <script is:inline>
-    AOS.init({ once: true, duration: 600, easing: 'ease-out' });
-  </script>
-  <body class="bg-white text-slate-900 antialiased">
+  <body>
+    <div class="grain" aria-hidden="true"></div>
     <slot />
-    <script src="https://unpkg.com/aos@2.3.4/dist/aos.js"></script>
-    <script> AOS.init({ once: true, duration: 600, easing: 'ease-out' }); </script>
+
+    <script is:inline>
+      // In-view reveal observer for sections below the fold
+      (() => {
+        const els = document.querySelectorAll('.io-reveal');
+        if (!('IntersectionObserver' in window)) {
+          els.forEach(el => el.classList.add('is-in'));
+          return;
+        }
+        const obs = new IntersectionObserver((entries) => {
+          entries.forEach((e) => {
+            if (e.isIntersecting) {
+              e.target.classList.add('is-in');
+              obs.unobserve(e.target);
+            }
+          });
+        }, { rootMargin: '-10% 0px -5% 0px', threshold: 0.1 });
+        els.forEach((el) => obs.observe(el));
+      })();
+
+      // Active section highlight in nav
+      (() => {
+        const links = Array.from(document.querySelectorAll('.nav-link'));
+        const byId = new Map(
+          links.map((a) => [a.getAttribute('href')?.replace('#', ''), a])
+        );
+        if (!('IntersectionObserver' in window)) return;
+        const obs = new IntersectionObserver(
+          (entries) => {
+            entries.forEach((e) => {
+              if (e.isIntersecting) {
+                links.forEach((l) => l.classList.remove('is-active'));
+                byId.get(e.target.id)?.classList.add('is-active');
+              }
+            });
+          },
+          { rootMargin: '-45% 0px -50% 0px', threshold: 0 }
+        );
+        document.querySelectorAll('main section[id]').forEach((s) => obs.observe(s));
+      })();
+
+      // About section expand/collapse — collapsed height tracks the aside column.
+      (() => {
+        const collapsible = document.querySelector('.about-collapsible');
+        const btn = document.querySelector('.about-toggle');
+        const aside = document.querySelector('.about-aside');
+        if (!collapsible || !btn || !aside) return;
+
+        const label = btn.querySelector('.label') || btn;
+
+        const measure = () => {
+          const asideH = aside.getBoundingClientRect().height;
+          const fullH = collapsible.scrollHeight;
+          if (asideH > 0) {
+            collapsible.style.setProperty('--collapsed', asideH + 'px');
+            collapsible.style.setProperty('--collapsed-mobile', asideH + 'px');
+          }
+          if (fullH > 0) {
+            collapsible.style.setProperty('--expanded', fullH + 'px');
+          }
+        };
+
+        const setState = (open) => {
+          collapsible.classList.toggle('is-open', open);
+          btn.setAttribute('aria-expanded', String(open));
+          label.textContent = open ? 'Read less' : 'Read more';
+        };
+
+        // Initial state — collapsed by default.
+        setState(false);
+        measure();
+        // Re-measure after fonts/images settle.
+        window.addEventListener('load', measure);
+        window.addEventListener('resize', measure);
+
+        btn.addEventListener('click', () => {
+          const open = btn.getAttribute('aria-expanded') === 'true';
+          if (!open) measure();
+          setState(!open);
+        });
+      })();
+    </script>
   </body>
 </html>

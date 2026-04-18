@@ -1,25 +1,23 @@
 document.addEventListener("DOMContentLoaded", () => {
-  const cards = document.querySelectorAll(".collapsible-card");
-
+  const entries = document.querySelectorAll(".entry");
   let idSeq = 0;
-  cards.forEach(card => {
-    const btn = card.querySelector(".collapsible-toggle");
-    const content = card.querySelector(".collapsible-content");
-    if (!btn || !content) return;
 
-    // Accessibility wiring
-    if (!content.id) content.id = `collapsible-${++idSeq}`;
-    btn.setAttribute("aria-controls", content.id);
+  entries.forEach((entry) => {
+    const btn = entry.querySelector(".entry-toggle");
+    const body = entry.querySelector(".entry-body");
+    if (!btn || !body) return;
+
+    if (!body.id) body.id = `entry-body-${++idSeq}`;
+    btn.setAttribute("aria-controls", body.id);
 
     const labelEl = btn.querySelector(".label") || btn;
 
     const setState = (open) => {
-      card.classList.toggle("is-open", open);
+      entry.classList.toggle("is-open", open);
       btn.setAttribute("aria-expanded", String(open));
-      labelEl.textContent = open ? "Show less" : "Show more";
+      labelEl.textContent = open ? "Collapse" : "Expand";
     };
 
-    // initial collapsed
     setState(false);
 
     btn.addEventListener("click", () => {
